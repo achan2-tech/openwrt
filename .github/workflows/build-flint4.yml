@@ -2,6 +2,9 @@ name: Build Flint 4 sysupgrade
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - flint4-support-blogic-pr
 
 permissions:
   contents: read
