@@ -51,6 +51,19 @@ jobs:
           EOF
           make defconfig
 
+      - name: Cache OpenWrt build state
+        uses: actions/cache@v4
+        with:
+          path: |
+            dl
+            build_dir/host
+            build_dir/target-aarch64_cortex-a53_musl
+            staging_dir/host
+            staging_dir/target-aarch64_cortex-a53_musl
+          key: ${{ runner.os }}-openwrt-flint4-${{ hashFiles('.config', 'feeds.conf.default') }}
+          restore-keys: |
+            ${{ runner.os }}-openwrt-flint4-
+
       - name: Build firmware
         run: make -j"$(nproc)"
 
