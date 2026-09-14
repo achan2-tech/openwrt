@@ -94,7 +94,7 @@ prepare-tmpinfo: FORCE
 .config: ./scripts/config/conf $(if $(CONFIG_HAVE_DOT_CONFIG),,prepare-tmpinfo)
 	@+if [ \! -e .config ] || ! grep CONFIG_HAVE_DOT_CONFIG .config >/dev/null; then \
 		[ -e $(HOME)/.openwrt/defconfig ] && cp $(HOME)/.openwrt/defconfig .config; \
-		$(_SINGLE)$(NO_TRACE_MAKE) menuconfig $(PREP_MK); \
+		$(_SINGLE)$(NO_TRACE_MAKE) $(if $(CI),defconfig,menuconfig) $(PREP_MK); \
 	fi
 
 ifeq ($(RECURSIVE_DEP_IS_ERROR),1)
@@ -269,4 +269,3 @@ ifeq ($(findstring v,$(DEBUG)),)
 endif
 .PHONY: help FORCE
 .NOTPARALLEL:
-
