@@ -1,0 +1,64 @@
+name: Build Flint 4 sysupgrade
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            clang \
+            file \
+            flex \
+            gawk \
+            gettext \
+            git \
+            libelf-dev \
+            libncurses-dev \
+            libssl-dev \
+            python3 \
+            rsync \
+            swig \
+            unzip \
+            wget \
+            xsltproc \
+            zlib1g-dev
+
+      - name: Configure GL-BE14000
+        run: |
+          cat > .config <<'EOF'
+          CONFIG_TARGET_mediatek=y
+          CONFIG_TARGET_mediatek_filogic=y
+          CONFIG_TARGET_mediatek_filogic_DEVICE_glinet_gl-be14000=y
+          CONFIG_TARGET_ROOTFS_SQUASHFS=y
+          CONFIG_PACKAGE_bridger=y
+          EOF
+          make defconfig
+
+      - name: Build firmware
+        run: make -j"$(nproc)"
+
+      - name: Show generated images
+        run: |
+          find bin/targets/mediatek/filogic -maxdepth 1 -type f -printf '%f\n' | sort
+
+      - name: Upload firmware images
+        uses: actions/upload-artifact@v4
+        with:
+          name: openwrt-flint4-gl-be14000
+          path: bin/targets/mediatek/filogic/
+          if-no-files-found: error
+          retention-days: 14

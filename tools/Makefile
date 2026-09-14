@@ -39,7 +39,7 @@ tools-y += cmake
 tools-y += cpio
 tools-y += dosfstools
 tools-y += e2fsprogs
-tools-y += elfutils
+# tools-y += elfutils
 tools-y += erofs-utils
 tools-y += expat
 tools-y += fakeroot
@@ -152,7 +152,7 @@ endif
 ifeq ($(HOST_OS),Darwin)
   tools-y += bash
 else
-  $(curdir)/dwarves/compile += $(curdir)/elfutils/compile
+  # $(curdir)/dwarves/compile += $(curdir)/elfutils/compile
   tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(CONFIG_DWARVES),y) += dwarves
 endif
 
